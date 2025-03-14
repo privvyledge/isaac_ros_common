@@ -11,6 +11,7 @@
 echo "Creating non-root container '${USERNAME}' for host user uid=${HOST_USER_UID}:gid=${HOST_USER_GID}"
 
 if [ ! $(getent group ${HOST_USER_GID}) ]; then
+  # echo "Creating non-root container '${USER}' for host user uid=${HOST_USER_UID}:gid=${HOST_USER_GID}"
   groupadd --gid ${HOST_USER_GID} ${USERNAME} &>/dev/null
 else
   CONFLICTING_GROUP_NAME=`getent group ${HOST_USER_GID} | cut -d: -f1`
@@ -18,6 +19,7 @@ else
 fi
 
 if [ ! $(getent passwd ${HOST_USER_UID}) ]; then
+  # echo "User with UID ${HOST_USER_UID} does not exist. Creating user '${USERNAME}'"
   useradd --no-log-init --uid ${HOST_USER_UID} --gid ${HOST_USER_GID} -m ${USERNAME} &>/dev/null
 else
   CONFLICTING_USER_NAME=`getent passwd ${HOST_USER_UID} | cut -d: -f1`
@@ -53,6 +55,12 @@ for addition in /usr/local/bin/scripts/entrypoint_additions/*.sh; do
     source ${addition}
   fi
 done
+
+# Source ROS workspace if exists
+if [[ ! -z "${ROS_WS}" ]]; then
+    source ${ROS_WS}/install/setup.bash
+    # echo "ROS workspace sourced: ${ROS_WS}"
+fi
 
 # Restart udev daemon
 service udev restart

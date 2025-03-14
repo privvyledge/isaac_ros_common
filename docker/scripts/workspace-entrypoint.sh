@@ -57,9 +57,9 @@ for addition in /usr/local/bin/scripts/entrypoint_additions/*.sh; do
 done
 
 # Source ROS workspace if exists
-if [[ ! -z "${ROS_WS}" ]]; then
-    source ${ROS_WS}/install/setup.bash
-    # echo "ROS workspace sourced: ${ROS_WS}"
+if [[ ! -z "${ISAAC_ROS_WS}" ]]; then
+    source ${ISAAC_ROS_WS}/install/setup.bash
+    echo "ROS workspace sourced: ${ISAAC_ROS_WS}"
 fi
 
 # Restart udev daemon

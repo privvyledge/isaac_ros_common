@@ -124,7 +124,7 @@ export CUDACXX=$NVCC_PATH
 export PATH=${PATH}:/usr/local/cuda/bin
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda/lib64
 
-/usr/bin/cmake ../ -DBUILD_EXAMPLES=true -DFORCE_RSUSB_BACKEND=true -DBUILD_WITH_CUDA="$USE_CUDA" -DCMAKE_BUILD_TYPE=release -DBUILD_PYTHON_BINDINGS=bool:true
+/usr/bin/cmake ../ -DBUILD_EXAMPLES=true -DFORCE_RSUSB_BACKEND=true -DBUILD_WITH_CUDA="$USE_CUDA" -DCMAKE_BUILD_TYPE=release -DBUILD_PYTHON_BINDINGS:bool=true -DBUILD_WITH_OPENMP=true -DCMAKE_INSTALL_PREFIX=/usr/local -DPYTHON_EXECUTABLE=/usr/bin/python3.10 -DPYTHON_INSTALL_DIR=$(python3 -c 'import sys; print(f"/usr/lib/python{sys.version_info.major}.{sys.version_info.minor}/dist-packages")') -DPYTHON_LIBRARY=/usr/lib/$(uname -m)-linux-gnu -DPYTHON_INCLUDE_DIR=/usr/include/python3.10
 
 # The library will be installed in /usr/local/lib, header files in /usr/local/include
 # The demos, tutorials and tests will located in /usr/local/bin.
@@ -163,6 +163,9 @@ else
 fi
 echo "${green}Installing librealsense, headers, tools and demos${reset}"
 sudo make install
+
+echo "${green}Copying python shared objects to /usr/local/lib${reset}"
+sudo cp Release/pyrealsense2.cpython-310-$(uname -m)-linux-gnu.so* /usr/local/lib/
   
 if  grep -Fxq 'export PYTHONPATH=$PYTHONPATH:/usr/local/lib' ~/.bashrc ; then
     echo "PYTHONPATH already exists in .bashrc file"
